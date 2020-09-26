@@ -1,8 +1,10 @@
 {
   "dependencies": {
-    "@opam/ocaml-lsp-server": "ocaml/ocaml-lsp:ocaml-lsp-server.opam",
-    "@opam/ocamlformat": "0.15.0",
     "@opam/reason": "*",
     "ocaml": "4.6.x"
+  },
+  "devDependencies": {
+    "@opam/ocaml-lsp-server": "ocaml/ocaml-lsp:ocaml-lsp-server.opam",
+    "@opam/ocamlformat": "0.15.0"
   }
 }
