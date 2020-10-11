@@ -72,6 +72,31 @@ module DocumentSelector = struct
     `Filter (DocumentFilter.createLanguage ~language:l ~scheme ?pattern ())
 end
 
+module Middleware = struct
+  open Vscode
+
+  type t = private (* interface *) Ojs.t [@@js]
+
+  type provideDocumentFormattingEdits =
+       TextDocument.t
+    -> FormattingOptions.t
+    -> CancellationToken.t
+    -> provideDocumentsFormattingEditsSig
+    -> TextEdit.t array ProviderResult.t
+  [@@js]
+
+  and provideDocumentsFormattingEditsSig =
+       TextDocument.t
+    -> FormattingOptions.t
+    -> CancellationToken.t
+    -> TextEdit.t array ProviderResult.t
+  [@@js]
+
+  val create :
+    ?provideDocumentFormattingEdits:provideDocumentFormattingEdits -> unit -> t
+    [@@js.builder]
+end
+
 module ClientOptions = struct
   type t = private (* interface *) Ojs.t [@@js]
 
@@ -85,6 +110,7 @@ module ClientOptions = struct
        ?documentSelector:DocumentSelector.t
     -> ?outputChannel:Vscode.OutputChannel.t
     -> ?revealOutputChannelOn:RevealOutputChannelOn.t
+    -> ?middleware:Middleware.t
     -> unit
     -> t
     [@@js.builder]

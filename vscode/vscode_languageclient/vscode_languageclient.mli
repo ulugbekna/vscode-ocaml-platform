@@ -77,6 +77,32 @@ module DocumentSelector : sig
   val language : ?scheme:string -> ?pattern:string -> string -> selector
 end
 
+module Middleware : sig
+  open Vscode
+
+  type t
+
+  val t_of_js : Ojs.t -> t
+
+  val t_to_js : t -> Ojs.t
+
+  type provideDocumentFormattingEdits =
+       TextDocument.t
+    -> FormattingOptions.t
+    -> CancellationToken.t
+    -> provideDocumentsFormattingEditsSig
+    -> TextEdit.t array ProviderResult.t
+
+  and provideDocumentsFormattingEditsSig =
+       TextDocument.t
+    -> FormattingOptions.t
+    -> CancellationToken.t
+    -> TextEdit.t array ProviderResult.t
+
+  val create :
+    ?provideDocumentFormattingEdits:provideDocumentFormattingEdits -> unit -> t
+end
+
 module ClientOptions : sig
   type t
 
@@ -94,6 +120,7 @@ module ClientOptions : sig
        ?documentSelector:DocumentSelector.t
     -> ?outputChannel:Vscode.OutputChannel.t
     -> ?revealOutputChannelOn:RevealOutputChannelOn.t
+    -> ?middleware:Middleware.t
     -> unit
     -> t
 end
