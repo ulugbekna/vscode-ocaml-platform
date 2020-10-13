@@ -72,7 +72,7 @@ module Instance = struct
       Window.createStatusBarItem ~alignment:StatusBarAlignment.Left ()
     in
     let package_manager = Toolchain.package_manager toolchain in
-    let status_bar_text =
+    let sandbox_info_text =
       let package_icon =
         "$(package)"
         (* see https://code.visualstudio.com/api/references/icons-in-labels *)
@@ -80,7 +80,7 @@ module Instance = struct
       Printf.sprintf "%s %s" package_icon
       @@ Toolchain.Package_manager.to_pretty_string package_manager
     in
-    StatusBarItem.set_text sandbox_info status_bar_text;
+    StatusBarItem.set_text sandbox_info sandbox_info_text;
     StatusBarItem.set_command sandbox_info (`String "ocaml.select-sandbox");
     (* FIXME *)
     StatusBarItem.show sandbox_info;
