@@ -33,7 +33,7 @@ module Instance = struct
     { mutable toolchain : Toolchain.resources option
     ; mutable client : LanguageClient.t option
     ; mutable ocaml_lsp_capabilities : Ocaml_lsp.t option
-    ; mutable status_bar_item : StatusBarItem.t option
+    ; mutable sandbox_info : StatusBarItem.t option
     ; dune_formatter : Dune_formatter.t
     ; dune_task_provider : Dune_task_provider.t
     }
@@ -42,7 +42,7 @@ module Instance = struct
     { toolchain = None
     ; client = None
     ; ocaml_lsp_capabilities = None
-    ; status_bar_item = None
+    ; sandbox_info = None
     ; dune_formatter = Dune_formatter.create ()
     ; dune_task_provider = Dune_task_provider.create ()
     }
@@ -51,9 +51,9 @@ module Instance = struct
     Dune_formatter.dispose t.dune_formatter;
     Dune_task_provider.dispose t.dune_task_provider;
 
-    Option.iter t.status_bar_item ~f:(fun status_bar_item ->
-        StatusBarItem.dispose status_bar_item;
-        t.status_bar_item <- None);
+    Option.iter t.sandbox_info ~f:(fun sandbox_info ->
+        StatusBarItem.dispose sandbox_info;
+        t.sandbox_info <- None);
 
     Option.iter t.client ~f:(fun client ->
         LanguageClient.stop client;
@@ -68,7 +68,7 @@ module Instance = struct
     Dune_formatter.register t.dune_formatter toolchain;
     Dune_task_provider.register t.dune_task_provider toolchain;
 
-    let status_bar_item =
+    let sandbox_info =
       Window.createStatusBarItem ~alignment:StatusBarAlignment.Left ()
     in
     let package_manager = Toolchain.package_manager toolchain in
@@ -80,11 +80,11 @@ module Instance = struct
       Printf.sprintf "%s %s" package_icon
       @@ Toolchain.Package_manager.to_pretty_string package_manager
     in
-    StatusBarItem.set_text status_bar_item status_bar_text;
-    StatusBarItem.set_command status_bar_item (`String "ocaml.select-sandbox");
+    StatusBarItem.set_text sandbox_info status_bar_text;
+    StatusBarItem.set_command sandbox_info (`String "ocaml.select-sandbox");
     (* FIXME *)
-    StatusBarItem.show status_bar_item;
-    t.status_bar_item <- Some status_bar_item;
+    StatusBarItem.show sandbox_info;
+    t.sandbox_info <- Some sandbox_info;
 
     let open Promise.Result.Syntax in
     Toolchain.run_setup toolchain >>= fun () ->
