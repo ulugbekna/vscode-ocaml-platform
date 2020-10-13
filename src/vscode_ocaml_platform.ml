@@ -113,6 +113,7 @@ module Instance = struct
 
     let open Promise.Syntax in
     LanguageClient.readyInitializeResult client >>| fun initialize_result ->
+    (* TODO: onNotification should be called after the client is initialized/created (specify) *)
     LanguageClient.onNotification client ~meth:"ocamlformat/update-success"
       (fun (_ : Jsonoo.t) ->
         log "set success ocamlformat";
@@ -121,6 +122,7 @@ module Instance = struct
       (fun (_ : Jsonoo.t) ->
         log "set failure ocamlformat";
         StatusBarItem.set_text ocamlformat_info "ocamformat $(error)");
+
     let ocaml_lsp = Ocaml_lsp.of_initialize_result initialize_result in
     t.ocaml_lsp_capabilities <- Some ocaml_lsp;
     if
