@@ -34,6 +34,7 @@ module Instance = struct
     ; mutable client : LanguageClient.t option
     ; mutable ocaml_lsp_capabilities : Ocaml_lsp.t option
     ; mutable sandbox_info : StatusBarItem.t option
+    ; mutable ocamlformat_info : StatusBarItem.t option
     ; dune_formatter : Dune_formatter.t
     ; dune_task_provider : Dune_task_provider.t
     }
@@ -43,6 +44,7 @@ module Instance = struct
     ; client = None
     ; ocaml_lsp_capabilities = None
     ; sandbox_info = None
+    ; ocamlformat_info = None
     ; dune_formatter = Dune_formatter.create ()
     ; dune_task_provider = Dune_task_provider.create ()
     }
@@ -54,6 +56,10 @@ module Instance = struct
     Option.iter t.sandbox_info ~f:(fun sandbox_info ->
         StatusBarItem.dispose sandbox_info;
         t.sandbox_info <- None);
+
+    Option.iter t.ocamlformat_info ~f:(fun ocamlformat_info ->
+        StatusBarItem.dispose ocamlformat_info;
+        t.ocamlformat_info <- None);
 
     Option.iter t.client ~f:(fun client ->
         LanguageClient.stop client;
@@ -86,6 +92,14 @@ module Instance = struct
     StatusBarItem.show sandbox_info;
     t.sandbox_info <- Some sandbox_info;
 
+    let ocamlformat_info =
+      Window.createStatusBarItem ~alignment:StatusBarAlignment.Left ()
+    in
+    StatusBarItem.set_text ocamlformat_info "ocamlformat";
+    StatusBarItem.set_command sandbox_info (`String "ocaml.select-sandbox");
+    StatusBarItem.show ocamlformat_info;
+    t.ocamlformat_info <- Some ocamlformat_info;
+
     let open Promise.Result.Syntax in
     Toolchain.run_setup toolchain >>= fun () ->
     let serverOptions = server_options toolchain in
@@ -99,6 +113,14 @@ module Instance = struct
 
     let open Promise.Syntax in
     LanguageClient.readyInitializeResult client >>| fun initialize_result ->
+    LanguageClient.onNotification client ~meth:"ocamlformat/update-success"
+      (fun (_ : Jsonoo.t) ->
+        log "set success ocamlformat";
+        StatusBarItem.set_text ocamlformat_info "ocamformat $(menu-selection)");
+    LanguageClient.onNotification client ~meth:"ocamlformat/update-failure"
+      (fun (_ : Jsonoo.t) ->
+        log "set failure ocamlformat";
+        StatusBarItem.set_text ocamlformat_info "ocamformat $(error)");
     let ocaml_lsp = Ocaml_lsp.of_initialize_result initialize_result in
     t.ocaml_lsp_capabilities <- Some ocaml_lsp;
     if
@@ -242,6 +264,7 @@ let activate (ctx : ExtensionContext.t) =
   Process.Env.set "OCAML_LSP_SERVER_LOG" "-";
   let instance = Instance.create () in
   register_commands ctx instance commands;
+
   ExtensionContext.subscribe ctx ~disposable:(Instance.disposable instance);
   let open Promise.Syntax in
   let toolchain =
