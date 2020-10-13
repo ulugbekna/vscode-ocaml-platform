@@ -190,4 +190,7 @@ module LanguageClient = struct
     -> unit
     -> Jsonoo.t Promise.t
     [@@js.call]
+
+  val onNotification : t -> meth:string -> (Jsonoo.t -> unit) -> unit
+    [@@js.call]
 end

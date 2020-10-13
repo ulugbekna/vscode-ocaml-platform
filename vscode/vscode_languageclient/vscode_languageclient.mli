@@ -205,4 +205,17 @@ module LanguageClient : sig
     -> ?token:Vscode.CancellationToken.t
     -> unit
     -> Jsonoo.t Promise.t
+
+  (*
+  Reference for easier review:
+
+  export interface GenericNotificationHandler {
+    (...params: any[]): void;
+  }
+
+  onNotification(method: string, handler: GenericNotificationHandler): void;
+
+  not sure if `Jsonoo.t` is correct binding for any[]
+  *)
+  val onNotification : t -> meth:string -> (Jsonoo.t -> unit) -> unit
 end
