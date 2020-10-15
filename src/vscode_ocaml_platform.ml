@@ -1,15 +1,5 @@
 open Import
 
-let select_sandbox_command_id = "ocaml.select-sandbox"
-
-let restart_command_id = "ocaml.server.restart"
-
-let open_terminal_command_id = "ocaml.open-terminal"
-
-let open_terminal_select_command_id = "ocaml.open-terminal-select"
-
-let switch_impl_intf_command_id = "ocaml.switch-impl-intf"
-
 let client_options () : LanguageClient.ClientOptions.t =
   let documentSelector =
     LanguageClient.DocumentSelector.
@@ -37,6 +27,16 @@ let server_options (toolchain : Toolchain.resources) :
     let command = Path.to_string bin in
     let options = LanguageClient.ExecutableOptions.create ~shell:false () in
     LanguageClient.Executable.create ~command ~args ~options ()
+
+let select_sandbox_command_id = "ocaml.select-sandbox"
+
+let restart_command_id = "ocaml.server.restart"
+
+let open_terminal_command_id = "ocaml.open-terminal"
+
+let open_terminal_select_command_id = "ocaml.open-terminal-select"
+
+let switch_impl_intf_command_id = "ocaml.switch-impl-intf"
 
 module Instance = struct
   type t =
