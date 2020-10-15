@@ -5,21 +5,19 @@ let get_formatter toolchain ~document ~options:_ ~token:_ =
   let endCharacter =
     TextDocument.lineAt document ~line:endLine |> TextLine.text |> String.length
   in
-  (* selects entire document range *)
-  let range =
+  let select_entire_doc =
     Range.makeCoordinates ~startLine:0 ~startCharacter:0 ~endLine ~endCharacter
   in
-  (* text of entire document *)
-  let document_text = TextDocument.getText document ~range () in
+  let entire_doc = TextDocument.getText document ~range:select_entire_doc () in
   let command = Toolchain.get_dune_command toolchain [ "format-dune-file" ] in
   let output =
     let open Promise.Result.Syntax in
-    Cmd.check command >>= fun command -> Cmd.output ~stdin:document_text command
+    Cmd.check command >>= fun command -> Cmd.output ~stdin:entire_doc command
   in
   let open Promise.Syntax in
   `Promise
     (output >>| function
-     | Ok newText -> Some [ TextEdit.replace ~range ~newText ]
+     | Ok newText -> Some [ TextEdit.replace ~range:select_entire_doc ~newText ]
      | Error msg ->
        message `Error "Dune formatting failed: %s" msg;
        Some [])
