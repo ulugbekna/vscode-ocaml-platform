@@ -1,11 +1,12 @@
 open Import
 
 let get_formatter toolchain ~document ~options:_ ~token:_ =
-  let endLine = TextDocument.lineCount document - 1 in
-  let endCharacter =
-    TextDocument.lineAt document ~line:endLine |> TextLine.text |> String.length
-  in
   let select_entire_doc =
+    let endLine = TextDocument.lineCount document - 1 in
+    let endCharacter =
+      TextDocument.lineAt document ~line:endLine
+      |> TextLine.text |> String.length
+    in
     Range.makeCoordinates ~startLine:0 ~startCharacter:0 ~endLine ~endCharacter
   in
   let entire_doc = TextDocument.getText document ~range:select_entire_doc () in
