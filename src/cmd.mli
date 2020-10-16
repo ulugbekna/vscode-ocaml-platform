@@ -19,9 +19,9 @@ type stderr = string
 
 val append : spawn -> string list -> spawn
 
-val check_spawn : spawn -> spawn Or_error.t Promise.t
+val check_spawn : spawn -> (spawn, stderr) result Promise.t
 
-val check : t -> t Or_error.t Promise.t
+val check : t -> (t, stderr) result Promise.t
 
 val log : ?result:ChildProcess.return -> t -> unit
 

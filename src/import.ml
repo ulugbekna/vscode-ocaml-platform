@@ -14,10 +14,6 @@ let property_exists json property =
 
 include Core_kernel
 
-module Or_error = struct
-  type 'a t = ('a, string) result
-end
-
 let message kind fmt =
   let k message =
     match kind with
