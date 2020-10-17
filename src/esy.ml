@@ -86,7 +86,7 @@ let state t ~manifest =
   let root_str = Path.to_string manifest in
   let command = Cmd.append t [ "status"; "-P"; root_str ] in
   let open Promise.Syntax in
-  Cmd.output (Spawn command)
+  Cmd.run (Spawn command)
   >>| (function
         | Error _ -> Ok false
         | Ok esy_output -> (

@@ -363,7 +363,7 @@ let run_setup resources =
   >>= (fun () ->
         let args = [ "--version" ] in
         let command = get_lsp_command resources ~args in
-        Cmd.check command >>= fun cmd -> Cmd.output cmd)
+        Cmd.check command >>= fun cmd -> Cmd.run cmd)
   |> Promise.map (function
        | Ok _ -> Ok ()
        | Error msg ->

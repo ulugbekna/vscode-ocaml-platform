@@ -25,4 +25,4 @@ val check : t -> (t, stderr) result Promise.t
 
 val log : ?result:ChildProcess.return -> t -> unit
 
-val output : ?stdin:string -> t -> (stdout, stderr) result Promise.t
+val run : ?stdin:string -> t -> (stdout, stderr) result Promise.t

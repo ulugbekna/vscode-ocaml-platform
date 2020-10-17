@@ -13,7 +13,7 @@ let get_formatter toolchain ~document ~options:_ ~token:_ =
   let command = Toolchain.get_dune_command toolchain [ "format-dune-file" ] in
   let output =
     let open Promise.Result.Syntax in
-    Cmd.check command >>= fun command -> Cmd.output ~stdin:entire_doc command
+    Cmd.check command >>= fun command -> Cmd.run ~stdin:entire_doc command
   in
   let open Promise.Syntax in
   `Promise

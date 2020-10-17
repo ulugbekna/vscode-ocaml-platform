@@ -46,7 +46,7 @@ let parse_switch_list out =
 let switch_list t =
   let command = Cmd.append t [ "switch"; "list"; "-s" ] in
   let open Promise.Syntax in
-  Cmd.output (Spawn command) >>| function
+  Cmd.run (Spawn command) >>| function
   | Error _ ->
     message `Warn "Unable to read the list of switches.";
     []
