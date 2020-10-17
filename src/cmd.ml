@@ -20,7 +20,7 @@ let path_missing_from_env = "'PATH' variable not found in the environment"
 let append { bin; args = args1 } args2 = { bin; args = args1 @ args2 }
 
 let candidates bin =
-  let bin_ext ext = Path.with_ext bin ~ext in
+  let bin_ext ext = Path.append bin ext in
   match Platform.t with
   | Win32 -> [ bin_ext ".exe"; bin_ext ".cmd" ]
   | _ -> [ bin ]

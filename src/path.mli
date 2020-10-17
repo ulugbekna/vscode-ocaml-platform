@@ -28,7 +28,9 @@ val relative : t -> string -> t
 
 val relative_all : t -> string list -> t
 
-val with_ext : t -> ext:string -> t
+(** [append t s] simply appends [t] and [s] (without any checks 
+    or adding delimiters) *)
+val append : t -> string -> t
 
 val parent : t -> t option
 

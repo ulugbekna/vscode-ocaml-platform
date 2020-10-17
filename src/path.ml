@@ -28,7 +28,7 @@ let relative = join
 
 let relative_all p xs = List.fold_left xs ~f:join ~init:p
 
-let with_ext x ~ext = x ^ ext
+let append t s = t ^ s
 
 let is_root = function
   | "" -> true
