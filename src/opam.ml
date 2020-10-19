@@ -5,8 +5,9 @@ module Switch = struct
     | Local of Path.t  (** if switch name is directory name where it's stored *)
     | Named of string  (** if switch is stored in ~/.opam *)
 
-  let make switch_name =
-    if Char.equal switch_name.[0] '/' then
+  let make ~switch_name =
+    let is_local t = Char.equal t.[0] '/' in
+    if is_local switch_name then
       Local (Path.of_string switch_name)
     else
       Named switch_name
@@ -20,6 +21,10 @@ module Switch = struct
     | Local x, Local y -> Path.equal x y
     | Named x, Named y -> String.equal x y
     | _, _ -> false
+
+  let is_local = function
+    | Local _ -> true
+    | Named _ -> false
 end
 
 let binary = Path.of_string "opam"

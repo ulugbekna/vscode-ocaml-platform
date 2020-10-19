@@ -17,7 +17,21 @@ type stderr = string
 
 let path_missing_from_env = "'PATH' variable not found in the environment"
 
+let bin bin_name = { bin = bin_name; args = [] }
+
+let is_runnable { bin; args } =
+  let open Promise.Syntax in
+  ChildProcess.spawn
+    (Path.to_string bin (* FIXME do we have to use path to represent bin *))
+    [||]
+  @@ ChildProcess.Options.create ()
+  >>| function
+  | { exitCode = 0; _ } -> true
+  | { exitCode = _; _ } -> false
+
 let append { bin; args = args1 } args2 = { bin; args = args1 @ args2 }
+
+let ( %% ) spawn args = append spawn args
 
 let candidates bin =
   let bin_ext ext = Path.append bin ext in

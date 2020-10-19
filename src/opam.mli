@@ -1,14 +1,18 @@
 module Switch : sig
-  type t =
+  type t = private
     | Local of Path.t
     | Named of string
 
-  val make : string -> t
+  val make : switch_name:string -> t
 
   val name : t -> string
+
+  val is_local : t -> bool
 end
 
 type t
+
+val bin : Cmd.spawn
 
 val make : unit -> t option Promise.t
 

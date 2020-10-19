@@ -12,13 +12,11 @@ let create ~scope ~key ~of_json ~to_json = { scope; key; to_json; of_json }
 let get ?section t =
   let section = Workspace.getConfiguration ?section () in
   match WorkspaceConfiguration.get section ~section:t.key () with
-  | None -> None
+  | None -> Error `No_such_setting
   | Some v -> (
     match t.of_json v with
-    | s -> Some s
-    | exception Jsonoo.Decode_error msg ->
-      message `Error "Setting %s is invalid: %s" t.key msg;
-      None )
+    | s -> Ok s
+    | exception Jsonoo.Decode_error msg -> Error (`Parse_error msg) )
 
 let set ?section t v =
   let section = Workspace.getConfiguration ?section () in
